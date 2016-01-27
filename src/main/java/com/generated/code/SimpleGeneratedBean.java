@@ -84,8 +84,25 @@ public class SimpleGeneratedBean extends BuildJavaClass {
    */
   public void buildField(List<SimpleJavaType> list, StringBuilder builder) {
     for (SimpleJavaType entity : list) {
+      buildFieldComment(builder, entity);
       buildFieldBefore(entity, builder);
       builder.append("private " + entity.getFieldType() + " " + entity.getFieldName() + ";\n");
+    }
+  }
+
+  /**
+   * 生成Field注释
+   * 
+   * @param builder
+   * @param entity
+   */
+  protected void buildFieldComment(StringBuilder builder, SimpleJavaType entity) {
+    if (entity.getComment() != null && entity.getComment().trim().length() > 0) {
+      builder.append(
+          "/**\n"
+          + "* " + entity.getComment() + "\n"
+          + "**/\n"
+     );
     }
   }
 
