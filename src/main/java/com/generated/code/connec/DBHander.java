@@ -15,7 +15,7 @@ import com.generated.code.exception.NotFountExcetion;
 
 public abstract class DBHander {
   protected String buildQuerySQL(String tableName) {
-    return "SELECT * FROM " + tableName;
+    return "SELECT * FROM `" + tableName + "`";
   }
 
   /**
@@ -95,6 +95,19 @@ public abstract class DBHander {
       }
     } catch (SQLException e) {
       throw e;
+    }
+    /**
+     * 获取列注释
+     */
+    List<InfomationSchema> isList = getInfomationSchema(connection, tableName);
+    for (int i = 0; i < list.size(); i++) {
+      SimpleJavaType javaType = list.get(i);
+      for (int j = 0; j < isList.size(); j++) {
+        InfomationSchema is = isList.get(j);
+        if (is.COLUMN_NAME.equals(javaType.getColumnName())) {
+          javaType.setComment(is.COLUMN_COMMENT);
+        }
+      }
     }
     return list;
   }
