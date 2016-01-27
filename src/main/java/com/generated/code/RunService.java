@@ -27,21 +27,24 @@ import com.generated.code.util.FileUtils;
  *
  */
 public class RunService {
+  /**
+   * generated java code path
+   */
   public static final String HOME = "/data/code";
   static DBHander dbHander = new MySQLHander();
   /* POJO类的包路径 */
-  static String POJO_PACK = "com.abc.model";
+  static String POJO_PACK = "com.xxx.order.model";
   /* DAO接口的包路径 */
-  static String DAO_PACK = "com.abc.dao";
+  static String DAO_PACK = "com.xxx.order.dao";
   /* DAO实现类的包路径 */
-  static String DAO_IMPL_PACK = "com.abc.dao.impl";
+  static String DAO_IMPL_PACK = "ccom.xxx.order.dao";
 
   public static void main(String[] args) throws SQLException {
-    String datebase = "custome_new";// 数据库名
-    String user = "kevin";// DB 用户名
-    String pwd = "123456";// DB 密码
-    String host = "localhost";// DB IP
-    int port = 3306;// DB 端口
+    String datebase = "database";// 数据库名
+    String user = "user_name";
+    String pwd = "pwd123456";
+    String host = "localhost";
+    int port = 3306;
     Connection connection = DBConnection.getMySQLConnection(datebase, user, pwd, host, port);
 
 
