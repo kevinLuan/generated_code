@@ -24,6 +24,10 @@ public class SimpleJavaType extends JavaBeanBase {
   private int columnType;// DB
   private String fieldName;
   /**
+   * 列注释
+   */
+  private String comment;
+  /**
    * 是否需要导入包
    */
   private boolean isImport = true;
@@ -193,5 +197,13 @@ public class SimpleJavaType extends JavaBeanBase {
 
   public String getDAOImplClassName() {
     return getClassName() + "DAOImpl";
+  }
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
   }
 }
