@@ -6,7 +6,7 @@ public abstract class JavaBeanBase {
    * 设置生成的包
    */
   private String pack;
-
+  private String rawPackage;
 
   public abstract String getClassName();
 
@@ -23,6 +23,7 @@ public abstract class JavaBeanBase {
   }
 
   public void setPackageInfo(String pack) {
+    this.rawPackage = pack;
     if (pack != null) {
       if (pack.startsWith("package ") && pack.endsWith(";")) {
         this.pack = pack;
@@ -34,5 +35,9 @@ public abstract class JavaBeanBase {
         this.pack = "package " + pack + ";";
       }
     }
+  }
+
+  public String getRawPackage() {
+    return rawPackage;
   }
 }
