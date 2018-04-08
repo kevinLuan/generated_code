@@ -32,7 +32,7 @@ public class RunService {
   public static final String HOME = "/data/code";
   static DBHander dbHander = new MySQLHander();
   /* POJO类的包路径 */
-  static String POJO_PACK = "com.look.coupon.bean";
+  static String POJO_PACK = "com.look.coupon.proto.model";
   /* DAO接口的包路径 */
   static String DAO_PACK = "com.look.coupon.mapper";
   /* DAO实现类的包路径 */
@@ -51,8 +51,9 @@ public class RunService {
     for (int i = 0; i < tableList.size(); i++) {
       List<SimpleJavaType> typeList = dbHander.getDBTypeToJavaType(connection, tableList.get(i));
       if (typeList != null) {
-        generatedPOJO(typeList);
+        // generatedPOJO(typeList);
         generatedMybatisXml(typeList);
+        GeneratedProtobuf.toProto(typeList, POJO_PACK);
         generatedMapper(typeList);
         // generateHibernatePOJO(typeList);
         // generatedDAO(typeList);
@@ -111,13 +112,13 @@ public class RunService {
   }
 
   public static void generatedMybatisXml(List<SimpleJavaType> typeList) {
-    for (int i = 0; i < typeList.size(); i++) {
-      SimpleJavaType javaType = typeList.get(i);
-      javaType.setPackageInfo(POJO_PACK);
-      StringBuilder builder = new StringBuilder(1024);
-      String fileName = GeneratedMybatis.toXml(javaType, DAO_PACK, builder);
-      FileUtils.writeFile(HOME + "/xml/" + fileName, builder.toString());
-    }
+    SimpleJavaType javaType = typeList.get(0);
+    javaType.setPackageInfo(POJO_PACK);
+    StringBuilder builder = new StringBuilder(1024);
+    String fileName = GeneratedMybatis.toXml(typeList, POJO_PACK, DAO_PACK, builder);
+    System.out.println(fileName);
+    FileUtils.writeFile(HOME + "/xml/" + fileName, builder.toString());
+
 
   }
 
