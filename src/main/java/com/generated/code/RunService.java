@@ -32,32 +32,35 @@ public class RunService {
   public static final String HOME = "/data/code";
   static DBHander dbHander = new MySQLHander();
   /* POJO类的包路径 */
-  static String POJO_PACK = "com.look.coupon.proto.model";
+  static String POJO_PACK = "com.lyh.customs.model";
   /* DAO接口的包路径 */
-  static String DAO_PACK = "com.look.coupon.mapper";
+  static String DAO_PACK = "com.lyh.customs.mapper";
   /* DAO实现类的包路径 */
-  static String DAO_IMPL_PACK = "ccom.xxx.order.dao";
+  static String DAO_IMPL_PACK = "com.lyh.customs.dao";
 
   public static void main(String[] args) throws SQLException {
-    String datebase = "coupon";// 数据库名
-    String user = "root";
+    String datebase = "mydb";// 数据库名
+    String user = "test";
     String pwd = "123456";
-    String host = "localhost";
+    String host = "127.0.0.1";
     int port = 3306;
     Connection connection = DBConnection.getMySQLConnection(datebase, user, pwd, host, port);
 
 
     List<String> tableList = dbHander.getTables(connection, false);
     for (int i = 0; i < tableList.size(); i++) {
+      // if (tableList.get(i).equals("wx_callback")
+      // || tableList.get(i).equals("wx_refund_callback")) {
       List<SimpleJavaType> typeList = dbHander.getDBTypeToJavaType(connection, tableList.get(i));
       if (typeList != null) {
-        // generatedPOJO(typeList);
+        generatedPOJO(typeList);
         generatedMybatisXml(typeList);
         GeneratedProtobuf.toProto(typeList, POJO_PACK);
         generatedMapper(typeList);
         // generateHibernatePOJO(typeList);
         // generatedDAO(typeList);
         // generatedDAOImpl(typeList);
+        // }
       }
     }
 

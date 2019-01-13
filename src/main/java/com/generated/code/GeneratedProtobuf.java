@@ -25,7 +25,9 @@ public class GeneratedProtobuf {
     types.put("DATE", "int64");
     types.put("DATETIME", "int64");
     types.put("TIMESTAMP", "int64");
-
+    
+    types.put("BIGINT UNSIGNED", "int64");
+    types.put("SMALLINT", "int32");
   }
 
   public static void toProto(List<SimpleJavaType> typeList, String pack) {
