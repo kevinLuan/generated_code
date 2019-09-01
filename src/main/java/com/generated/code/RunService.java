@@ -39,8 +39,8 @@ public class RunService {
   static String DAO_IMPL_PACK = "com.lyh.customs.dao";
 
   public static void main(String[] args) throws SQLException {
-    String datebase = "mydb";// 数据库名
-    String user = "test";
+    String datebase = "open";// 数据库名
+    String user = "root";
     String pwd = "123456";
     String host = "127.0.0.1";
     int port = 3306;

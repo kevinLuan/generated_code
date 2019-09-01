@@ -87,7 +87,8 @@ public abstract class DBHander {
         simpleJavaType.setDatabaseName(metaData.getCatalogName(i));
         simpleJavaType.setPrecision(metaData.getPrecision(i));
         simpleJavaType.setScale(metaData.getScale(i));
-        simpleJavaType.setTableName(metaData.getTableName(i));
+//        simpleJavaType.setTableName(metaData.getTableName(i));
+        simpleJavaType.setTableName(tableName);
         simpleJavaType.setColumnType(metaData.getColumnType(i));
         simpleJavaType.setColumnTypeName(metaData.getColumnTypeName(i));
         list.add(simpleJavaType);
