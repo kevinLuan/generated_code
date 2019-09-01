@@ -1,4 +1,4 @@
-package com.generated.code.connec;
+package com.generated.code.handler;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,18 +17,18 @@ import com.generated.code.entity.JavaDataType;
 import com.generated.code.entity.SimpleJavaType;
 import com.generated.code.exception.NotFountExcetion;
 
-public class PostgreHander extends DBHander {
+public class MySQLHandler extends DBHandler {
 	JavaDataType javaDataType = new JavaDataType();
 	{
 		javaDataType.init();
 	}
 
 	protected String buildQuerySQL(String tableName) {
-		return "SELECT * FROM \"" + tableName + "\"";
+		return "SELECT * FROM `" + tableName + "`";
 	}
 
 	public List<JavaBeanEntity> readDBTypeToJavaType(Connection connection, String tableName)
-			throws SQLException, NotFountExcetion {// TODO 暂时没有实现
+			throws SQLException, NotFountExcetion {
 		List<JavaBeanEntity> list = new ArrayList<JavaBeanEntity>();
 		System.out.println("exec sql :" + buildQuerySQL(tableName));
 		try {
@@ -83,18 +83,15 @@ public class PostgreHander extends DBHander {
 
 	public List<String> getTables(Connection connection) throws SQLException {
 		List<String> tableList = new ArrayList<String>();
-		String sql = "select relname as tabname from pg_class c WHERE relkind = 'r' and relname not like 'pg_%' and relname not like 'sql_%' order by relname";
+		// SHOW TABLE STATUS from qstory_account
+		String sql = "show tables;";
 		try {
 			PreparedStatement pStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = pStatement.executeQuery();
-			ResultSetMetaData metaData = pStatement.getMetaData();
-			int count = metaData.getColumnCount();
+			// ResultSetMetaData metaData = pStatement.getMetaData();
+			// int count = metaData.getColumnCount();
 			while (resultSet.next()) {
-				int i = 1;
-				while (count >= i) {
-					tableList.add(resultSet.getString(i));
-					i++;
-				}
+				tableList.add(resultSet.getString(1));
 			}
 		} catch (SQLException e) {
 			throw e;
@@ -103,19 +100,35 @@ public class PostgreHander extends DBHander {
 	}
 
 	public List<String> getTables(Connection connection, boolean showView) throws SQLException {
-		// TODO 暂不支持视图
-		return this.getTables(connection);
+		List<String> tableList = new ArrayList<String>();
+		// SHOW TABLE STATUS from qstory_account
+		String sql = "SHOW TABLE STATUS from " + connection.getCatalog() + ";";
+		if (!showView) {
+			sql = "SHOW TABLE STATUS from " + connection.getCatalog() + " WHERE Engine is not null and Version is not null";
+		}
+		try {
+			PreparedStatement pStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				tableList.add(resultSet.getString(1));
+			}
+		} catch (SQLException e) {
+			throw e;
+		}
+		return tableList;
 	}
 
 	public Map<String, String> getTableComment(Connection connection, boolean showView, String tableName)
 			throws SQLException {
 		Map<String, String> map = new HashMap<String, String>();
-		String sql = "select relname as tabname, cast( obj_description(relfilenode, 'pg_class') as varchar) as comment"
-				+ " from pg_class c where relkind = 'r' and relname not like 'pg_%' and relname not like 'sql_%'";
-		if (tableName != null) {
-			sql += " and relname='" + tableName + "'";
+		String sql = "SELECT table_name,TABLE_COMMENT from INFORMATION_SCHEMA.TABLES" + " WHERE table_schema = '"
+				+ connection.getCatalog() + "'";
+		if (!showView) {
+			sql += " and (Engine is not null and Version is not null)";
 		}
-		sql += " order by relname";
+		if (tableName != null) {
+			sql += " and table_name='" + tableName + "'";
+		}
 		try {
 			PreparedStatement pStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = pStatement.executeQuery();
@@ -129,28 +142,23 @@ public class PostgreHander extends DBHander {
 	}
 
 	public List<InfomationSchema> getInfomationSchema(Connection connection, String tableName) throws SQLException {
-		String sql = "SELECT col_description(a.attrelid,a.attnum) as COMMENT,"//
-				+ "format_type(a.atttypid,a.atttypmod) as DATA_TYPE,"//
-				+ "a.attname as NAME,"//
-				+ "a.attnotnull as IS_NULLABLE"//
-				+ " FROM pg_class as c,pg_attribute as a where c.relname = '" + tableName
-				+ "' and a.attrelid = c.oid and a.attnum>0";
+		String sql = "SELECT TABLE_NAME,COLUMN_NAME,COLUMN_DEFAULT,IS_NULLABLE,DATA_TYPE"
+				+ ",CHARACTER_MAXIMUM_LENGTH,COLUMN_KEY,COLUMN_COMMENT" + " from INFORMATION_SCHEMA.COLUMNS"
+				+ " WHERE table_schema = '" + connection.getCatalog() + "'" + " AND table_name = '" + tableName + "'";
 		List<InfomationSchema> list = new ArrayList<InfomationSchema>();
 		try {
 			PreparedStatement pStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = pStatement.executeQuery();
 			while (resultSet.next()) {
 				InfomationSchema infoSchema = new InfomationSchema();
-				infoSchema.TABLE_NAME = tableName;
-				infoSchema.COLUMN_NAME = resultSet.getString("NAME");
-				// infoSchema.COLUMN_DEFAULT = resultSet.getString("COLUMN_DEFAULT");
-				infoSchema.IS_NULLABLE = resultSet.getString("IS_NULLABLE");//// t:notnull
-																																		//// ,f:null
+				infoSchema.TABLE_NAME = resultSet.getString("TABLE_NAME");
+				infoSchema.COLUMN_NAME = resultSet.getString("COLUMN_NAME");
+				infoSchema.COLUMN_DEFAULT = resultSet.getString("COLUMN_DEFAULT");
+				infoSchema.IS_NULLABLE = resultSet.getString("IS_NULLABLE");
 				infoSchema.DATA_TYPE = resultSet.getString("DATA_TYPE");
-				// infoSchema.CHARACTER_MAXIMUM_LENGTH =
-				// resultSet.getString("CHARACTER_MAXIMUM_LENGTH");
-				// infoSchema.COLUMN_KEY = resultSet.getString("COLUMN_KEY");
-				infoSchema.COLUMN_COMMENT = resultSet.getString("COMMENT");
+				infoSchema.CHARACTER_MAXIMUM_LENGTH = resultSet.getString("CHARACTER_MAXIMUM_LENGTH");
+				infoSchema.COLUMN_KEY = resultSet.getString("COLUMN_KEY");
+				infoSchema.COLUMN_COMMENT = resultSet.getString("COLUMN_COMMENT");
 				list.add(infoSchema);
 			}
 		} catch (SQLException e) {
