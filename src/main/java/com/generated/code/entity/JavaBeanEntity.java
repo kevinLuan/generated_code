@@ -1,11 +1,12 @@
 package com.generated.code.entity;
 
+import com.generated.code.natives.DataType;
 import com.generated.code.util.StringUtils;
 
 
 public class JavaBeanEntity extends JavaBeanBase {
   private String columnName;
-  private JavaDataType dataType = null;
+  private DataType dataType = null;
   private boolean isAutoIncrement;
   private String databaseName;
   private String fieldName;
@@ -14,7 +15,7 @@ public class JavaBeanEntity extends JavaBeanBase {
   private int columnDisplaySize;
   private String columnClassName;
 
-  public JavaBeanEntity(JavaDataType dataType) {
+  public JavaBeanEntity(DataType dataType) {
     this.dataType = dataType;
   }
 
@@ -83,11 +84,11 @@ public class JavaBeanEntity extends JavaBeanBase {
     this.isAutoIncrement = isAutoIncrement;
   }
 
-  public JavaDataType getDataType() {
+  public DataType getDataType() {
     return dataType;
   }
 
-  public void setDataType(JavaDataType dataType) {
+  public void setDataType(DataType dataType) {
     this.dataType = dataType;
   }
 

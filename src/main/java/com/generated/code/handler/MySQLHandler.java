@@ -13,15 +13,14 @@ import java.util.Map;
 
 import com.generated.code.entity.InfomationSchema;
 import com.generated.code.entity.JavaBeanEntity;
-import com.generated.code.entity.JavaDataType;
 import com.generated.code.entity.SimpleJavaType;
 import com.generated.code.exception.NotFountExcetion;
+import com.generated.code.natives.DataType;
+import com.generated.code.natives.MysqlNative;
+import com.generated.code.natives.Native;
 
 public class MySQLHandler extends DBHandler {
-	JavaDataType javaDataType = new JavaDataType();
-	{
-		javaDataType.init();
-	}
+	Native mysqlNative = new MysqlNative();
 
 	protected String buildQuerySQL(String tableName) {
 		return "SELECT * FROM `" + tableName + "`";
@@ -54,29 +53,21 @@ public class MySQLHandler extends DBHandler {
 				simpleJavaType.setTableName(metaData.getTableName(i));
 				simpleJavaType.setColumnType(metaData.getColumnType(i));
 				simpleJavaType.setColumnTypeName(metaData.getColumnTypeName(i));
-				if (javaDataType.map.get(metaData.getColumnTypeName(i)) == null) {
-					throw new NotFountExcetion("没有找到匹配的数据类型:" + metaData.getColumnTypeName(i));
-				} else {
-					JavaDataType dataType = (JavaDataType) javaDataType.map.get(metaData.getColumnTypeName(i)).clone();
-					if (dataType != null) {
-						JavaBeanEntity entity = new JavaBeanEntity(dataType);
-						entity.setTableName(metaData.getTableName(i));
-						entity.setAutoIncrement(metaData.isAutoIncrement(i));
-						entity.setColumnName(metaData.getColumnName(i));
-						entity.setDatabaseName(metaData.getCatalogName(i));
-						entity.setPrecision(metaData.getPrecision(i));
-						entity.setScale(metaData.getScale(i));
-						entity.setColumnDisplaySize(metaData.getColumnDisplaySize(i));
-						entity.setColumnClassName(metaData.getColumnClassName(i));
-						list.add(entity);
-					}
-				}
+				DataType dataType = mysqlNative.get(metaData.getColumnTypeName(i));
+				JavaBeanEntity entity = new JavaBeanEntity(dataType);
+				entity.setTableName(metaData.getTableName(i));
+				entity.setAutoIncrement(metaData.isAutoIncrement(i));
+				entity.setColumnName(metaData.getColumnName(i));
+				entity.setDatabaseName(metaData.getCatalogName(i));
+				entity.setPrecision(metaData.getPrecision(i));
+				entity.setScale(metaData.getScale(i));
+				entity.setColumnDisplaySize(metaData.getColumnDisplaySize(i));
+				entity.setColumnClassName(metaData.getColumnClassName(i));
+				list.add(entity);
 				i++;
 			}
 		} catch (SQLException e) {
 			throw e;
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
 		}
 		return list;
 	}
