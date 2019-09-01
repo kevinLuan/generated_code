@@ -20,7 +20,6 @@ public class SimpleJavaType extends JavaBeanBase {
 	private int precision;// 精度
 	private int scale;// 刻度
 	private int columnDisplaySize;
-	// private String tableName;
 	private String databaseName;
 	private boolean isAutoIncrement;
 	private String columnName;
@@ -36,86 +35,6 @@ public class SimpleJavaType extends JavaBeanBase {
 	 */
 	private boolean isImport = true;
 	private String columnTypeName;
-
-	public String getColumnClassName() {
-		return columnClassName;
-	}
-
-	public void setColumnClassName(String columnClassName) {
-		this.columnClassName = columnClassName;
-	}
-
-	public String getColumnLabel() {
-		return columnLabel;
-	}
-
-	public void setColumnLabel(String columnLabel) {
-		this.columnLabel = columnLabel;
-	}
-
-	public int getPrecision() {
-		return precision;
-	}
-
-	public void setPrecision(int precision) {
-		this.precision = precision;
-	}
-
-	public int getScale() {
-		return scale;
-	}
-
-	public void setScale(int scale) {
-		this.scale = scale;
-	}
-
-	public int getColumnDisplaySize() {
-		return columnDisplaySize;
-	}
-
-	public void setColumnDisplaySize(int columnDisplaySize) {
-		this.columnDisplaySize = columnDisplaySize;
-	}
-
-	public String getDatabaseName() {
-		return databaseName;
-	}
-
-	public void setDatabaseName(String databaseName) {
-		this.databaseName = databaseName;
-	}
-
-	public boolean isAutoIncrement() {
-		return isAutoIncrement;
-	}
-
-	public void setAutoIncrement(boolean isAutoIncrement) {
-		this.isAutoIncrement = isAutoIncrement;
-	}
-
-	public String getColumnName() {
-		return columnName;
-	}
-
-	public void setColumnName(String columnName) {
-		this.columnName = columnName;
-	}
-
-	public int getColumnType() {
-		return columnType;
-	}
-
-	public void setColumnType(int columnType) {
-		this.columnType = columnType;
-	}
-
-	public String getColumnTypeName() {
-		return columnTypeName;
-	}
-
-	public void setColumnTypeName(String columnTypeName) {
-		this.columnTypeName = columnTypeName;
-	}
 
 	/**
 	 * 获取生成属性的getter方法名称
@@ -174,14 +93,6 @@ public class SimpleJavaType extends JavaBeanBase {
 		}
 	}
 
-	public boolean isImport() {
-		return isImport;
-	}
-
-	public void setImport(boolean bool) {
-		this.isImport = bool;
-	}
-
 	@Override
 	public String getClassName() {
 		return StringUtils.processStr_(getTableName());
@@ -193,13 +104,5 @@ public class SimpleJavaType extends JavaBeanBase {
 
 	public String getDAOImplClassName() {
 		return getClassName() + "DAOImpl";
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 }
