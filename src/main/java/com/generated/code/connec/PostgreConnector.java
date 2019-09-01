@@ -32,4 +32,16 @@ public class PostgreConnector implements Connector {
 		return handler;
 	}
 
+	@Override
+	public void close() {
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			this.connection = null;
+		}
+	}
+
 }

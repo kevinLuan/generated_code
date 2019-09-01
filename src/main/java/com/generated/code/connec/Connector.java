@@ -23,12 +23,9 @@ public interface Connector {
 		return getHandler().getTableComment(getConnection(), false, table);
 	}
 
-	// default List<InfomationSchema> getColumns(String table) throws SQLException
-	// {
-	// return getHandler().getInfomationSchema(getConnection(), table);
-	// }
-
 	default List<SimpleJavaType> getColumns(String table) throws SQLException {
 		return getHandler().getDBTypeToJavaType(getConnection(), table);
 	}
+
+	void close();
 }

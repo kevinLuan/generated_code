@@ -35,6 +35,7 @@ public class PostgreTest {
 			}
 
 		});
+		connector.close();
 
 	}
 
