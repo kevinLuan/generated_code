@@ -3,73 +3,25 @@ package com.generated.code.handler;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.generated.code.entity.InfomationSchema;
-import com.generated.code.entity.JavaBeanEntity;
-import com.generated.code.entity.SimpleJavaType;
-import com.generated.code.exception.NotFountExcetion;
-import com.generated.code.natives.DataType;
 import com.generated.code.natives.MysqlNative;
 import com.generated.code.natives.Native;
 
-public class MySQLHandler extends DBHandler {
-	Native mysqlNative = new MysqlNative();
+public class MySQLHandler extends DatabaseHandler {
+
+	@Override
+	Native getNative() {
+		return new MysqlNative();
+	}
 
 	protected String buildQuerySQL(String tableName) {
 		return "SELECT * FROM `" + tableName + "`";
-	}
-
-	public List<JavaBeanEntity> readDBTypeToJavaType(Connection connection, String tableName)
-			throws SQLException, NotFountExcetion {
-		List<JavaBeanEntity> list = new ArrayList<JavaBeanEntity>();
-		System.out.println("exec sql :" + buildQuerySQL(tableName));
-		try {
-			PreparedStatement pStatement = connection.prepareStatement(buildQuerySQL(tableName), Statement.NO_GENERATED_KEYS);
-			// java.sql.Types types;
-			ResultSetMetaData metaData = pStatement.getMetaData();
-			int count = metaData.getColumnCount();
-			int i = 1;
-			while (count >= i) {
-				SimpleJavaType simpleJavaType = new SimpleJavaType();
-				simpleJavaType.setAutoIncrement(metaData.isAutoIncrement(i));
-				if (!metaData.getColumnClassName(i).equals("[B")) {
-					simpleJavaType.setColumnClassName("java.lang.Byte[]");
-				} else {
-					simpleJavaType.setColumnClassName(metaData.getColumnClassName(i));
-				}
-				simpleJavaType.setColumnLabel(metaData.getColumnLabel(i));
-				simpleJavaType.setColumnDisplaySize(metaData.getColumnDisplaySize(i));
-				simpleJavaType.setColumnName(metaData.getColumnName(i));
-				simpleJavaType.setDatabaseName(metaData.getCatalogName(i));
-				simpleJavaType.setPrecision(metaData.getPrecision(i));
-				simpleJavaType.setScale(metaData.getScale(i));
-				simpleJavaType.setTableName(metaData.getTableName(i));
-				simpleJavaType.setColumnType(metaData.getColumnType(i));
-				simpleJavaType.setColumnTypeName(metaData.getColumnTypeName(i));
-				DataType dataType = mysqlNative.get(metaData.getColumnTypeName(i));
-				JavaBeanEntity entity = new JavaBeanEntity(dataType);
-				entity.setTableName(metaData.getTableName(i));
-				entity.setAutoIncrement(metaData.isAutoIncrement(i));
-				entity.setColumnName(metaData.getColumnName(i));
-				entity.setDatabaseName(metaData.getCatalogName(i));
-				entity.setPrecision(metaData.getPrecision(i));
-				entity.setScale(metaData.getScale(i));
-				entity.setColumnDisplaySize(metaData.getColumnDisplaySize(i));
-				entity.setColumnClassName(metaData.getColumnClassName(i));
-				list.add(entity);
-				i++;
-			}
-		} catch (SQLException e) {
-			throw e;
-		}
-		return list;
 	}
 
 	public List<String> getTables(Connection connection) throws SQLException {
@@ -107,6 +59,10 @@ public class MySQLHandler extends DBHandler {
 			throw e;
 		}
 		return tableList;
+	}
+
+	public Map<String, String> getTableComment(Connection connection, String tableName) throws SQLException {
+		return getTableComment(connection, false, tableName);
 	}
 
 	public Map<String, String> getTableComment(Connection connection, boolean showView, String tableName)

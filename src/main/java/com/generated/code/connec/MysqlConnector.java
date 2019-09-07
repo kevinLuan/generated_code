@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.generated.code.handler.DBHandler;
+import com.generated.code.handler.DatabaseHandler;
 import com.generated.code.handler.MySQLHandler;
 
 import lombok.Getter;
@@ -13,11 +13,10 @@ import lombok.SneakyThrows;
 public class MysqlConnector implements Connector {
 	@Getter
 	private Connection connection;
-	private DBHandler handler = new MySQLHandler();
+	private DatabaseHandler handler = new MySQLHandler();
 
 	@SneakyThrows
-	public Connector createConnector(String database, String user, String password, String host, int port)
-			throws SQLException {
+	public Connector createConnector(String database, String user, String password, String host, int port) {
 		System.out.println("获取数据库连接......");
 		Class.forName("com.mysql.jdbc.Driver");
 		this.connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, user, password);
@@ -25,7 +24,7 @@ public class MysqlConnector implements Connector {
 	}
 
 	@Override
-	public DBHandler getHandler() {
+	public DatabaseHandler getHandler() {
 		return handler;
 	}
 

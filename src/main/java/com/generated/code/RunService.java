@@ -1,7 +1,6 @@
 package com.generated.code;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 import com.generated.code.connec.Connector;
@@ -24,7 +23,7 @@ public class RunService {
 	 * generated java code path
 	 */
 	public static final String HOME = "/data/code";
-	/* POJO类的包路径 */
+	public static final String BASE_PACK = "com.lyh";
 	static String POJO_PACK = "com.lyh.customs.model";
 	/* DAO接口的包路径 */
 	static String DAO_PACK = "com.lyh.customs.mapper";
@@ -32,28 +31,37 @@ public class RunService {
 	static String DAO_IMPL_PACK = "com.lyh.customs.dao";
 
 	public static void main(String[] args) throws SQLException {
+		Connector connector = createPostgre();
+		// createMysql();
+		connector.getTables().forEach((table) -> {
+			List<SimpleJavaType> typeList = connector.getColumns(table);
+			generatedPOJO(typeList);
+			generatedMybatisXml(typeList);
+			// GeneratedProtobuf.toProto(typeList, POJO_PACK);
+			generatedMapper(typeList);
+			// generateHibernatePOJO(typeList);
+			generatedDAO(typeList);
+			generatedDAOImpl(typeList);
+		});
+		connector.close();
+	}
+
+	static Connector createMysql() throws SQLException {
 		String database = "open";// 数据库名
 		String user = "root";
 		String password = "123456";
 		String host = "127.0.0.1";
 		int port = 3306;
-		Connector connector = Connectors.createMysqlConnector(database, user, password, host, port);
-		List<String> tableList = connector.getTables();
-		System.out.println("表名:" + Arrays.toString(tableList.toArray()));
-		for (int i = 0; i < tableList.size(); i++) {
-			List<SimpleJavaType> typeList = connector.getColumns(tableList.get(i));
-			if (typeList != null) {
-				generatedPOJO(typeList);
-				generatedMybatisXml(typeList);
-				GeneratedProtobuf.toProto(typeList, POJO_PACK);
-				generatedMapper(typeList);
-				// generateHibernatePOJO(typeList);
-				// generatedDAO(typeList);
-				// generatedDAOImpl(typeList);
-				// }
-			}
-		}
-		connector.close();
+		return Connectors.createMysqlConnector(database, user, password, host, port);
+	}
+
+	static Connector createPostgre() throws SQLException {
+		String host = "127.0.0.1";
+		int port = 5000;
+		String user = "root";
+		String password = "123456";
+		String database = "kevin";
+		return Connectors.createPostgreConnector(database, user, password, host, port);
 	}
 
 	/**
