@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import com.generated.code.handler.DatabaseHandler;
 import com.generated.code.handler.MySQLHandler;
+import com.generated.code.util.Config;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -16,11 +17,13 @@ public class MysqlConnector implements Connector {
 	private DatabaseHandler handler = new MySQLHandler();
 
 	@SneakyThrows
-	public Connector createConnector(String database, String user, String password, String host, int port) {
-		System.out.println("获取数据库连接......");
-		Class.forName("com.mysql.jdbc.Driver");
-		this.connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, user, password);
-		return this;
+	public MysqlConnector(Config config) {
+		Class.forName(config.getDriver());
+		this.connection = DriverManager.getConnection(config.getJdbcUrl(), config.getUserName(), config.getPwd());
+	}
+
+	public static Connector of(Config config) {
+		return new MysqlConnector(config);
 	}
 
 	@Override
@@ -39,4 +42,5 @@ public class MysqlConnector implements Connector {
 			this.connection = null;
 		}
 	}
+
 }

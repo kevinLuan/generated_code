@@ -3,10 +3,10 @@ package com.generated.code.connec;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.text.MessageFormat;
 
 import com.generated.code.handler.DatabaseHandler;
 import com.generated.code.handler.PostgreHandler;
+import com.generated.code.util.Config;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -16,14 +16,14 @@ public class PostgreConnector implements Connector {
 	private Connection connection;
 	private DatabaseHandler handler = new PostgreHandler();
 
-	@Override
 	@SneakyThrows
-	public Connector createConnector(String database, String user, String password, String host, int port) {
-		Class.forName("org.postgresql.Driver");
-		String pattern = "jdbc:postgresql://{0}:{1}/{2}";
-		String url = MessageFormat.format(pattern, host, String.valueOf(port), database);
-		this.connection = DriverManager.getConnection(url, user, password);
-		return this;
+	public PostgreConnector(Config config) {
+		Class.forName(config.getDriver());
+		this.connection = DriverManager.getConnection(config.getJdbcUrl(), config.getUserName(), config.getPwd());
+	}
+
+	public static Connector of(Config config) {
+		return new PostgreConnector(config);
 	}
 
 	@Override

@@ -1,11 +1,13 @@
 package com.generated.code.connec;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.List;
 import java.util.Map;
 
 import com.generated.code.entity.SimpleJavaType;
 import com.generated.code.handler.DatabaseHandler;
+import com.generated.code.util.Config;
 
 import lombok.SneakyThrows;
 
@@ -15,12 +17,10 @@ import lombok.SneakyThrows;
  * @author SHOUSHEN LUAN
  */
 public interface Connector {
-	Connector createConnector(String database, String user, String password, String host, int port);
-
 	DatabaseHandler getHandler();
 
 	Connection getConnection();
-
+	
 	@SneakyThrows
 	default List<String> getTables() {
 		return getHandler().getTables(getConnection());
