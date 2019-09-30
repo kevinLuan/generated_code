@@ -40,9 +40,12 @@ public class RunService {
 	public static void main(String[] args) throws SQLException {
 		Connector connector = config.getConnector();
 		connector.getTables().forEach((table) -> {
+			 if(!table.startsWith("user_log")){
+			 return;
+			 }
 			List<SimpleJavaType> typeList = connector.getColumns(table);
 			generatedPOJO(typeList);
-			generatedMybatisXml(typeList);
+			generatedMybatisXml(typeList, false);
 			// GeneratedProtobuf.toProto(typeList, POJO_PACK);
 			generatedMapper(typeList);
 			// generateHibernatePOJO(typeList);
@@ -94,11 +97,11 @@ public class RunService {
 		}
 	}
 
-	public static void generatedMybatisXml(List<SimpleJavaType> typeList) {
+	public static void generatedMybatisXml(List<SimpleJavaType> typeList, boolean isProtoType) {
 		SimpleJavaType javaType = typeList.get(0);
 		javaType.setPackageInfo(config.getPojoPack());
 		StringBuilder builder = new StringBuilder(1024);
-		String fileName = GeneratedMybatis.toXml(typeList, config, builder);
+		String fileName = GeneratedMybatis.toXml(typeList, config, builder, isProtoType);
 		System.out.println(fileName);
 		FileUtils.writeFile(config.getCodePath("/xml/" + fileName), builder.toString());
 

@@ -6,6 +6,7 @@ import com.generated.code.util.Config;
 
 public class GeneratedMybatis {
 	private static StringBuffer template = new StringBuffer(1024);
+	static final String DateTimeHandler = "mybatis.handler.DateTimeTypeHandler";
 	static {
 		init();
 	}
@@ -50,10 +51,14 @@ public class GeneratedMybatis {
 	 * @param builder
 	 * @return 文件名
 	 */
-	public static String toXml(List<SimpleJavaType> javaTypes, Config config, StringBuilder builder) {
+	public static String toXml(List<SimpleJavaType> javaTypes, Config config, StringBuilder builder,
+			boolean isProtoType) {
 		SimpleJavaType javaType = javaTypes.get(0);
 		// 名称使用GRPC生成的Model.builder
-		String modelName = config.getPojoPack() + "." + javaType.getClassName() + "$Builder";
+		String modelName = config.getPojoPack() + "." + javaType.getClassName();
+		if (isProtoType) {
+			modelName += "$Builder";
+		}
 		String mapperName = javaType.getClassName() + "Mapper";
 		builder.append(template.toString()).append("\n");
 		builder.append(String.format("<mapper namespace=\"%s.%s\">\n", config.getMapperPack(), mapperName));
@@ -62,10 +67,10 @@ public class GeneratedMybatis {
 
 		// <parameterMap type="xx.$Builder" id="xxxMap">
 		// <parameter property="startTime"
-		// typeHandler="com.look.mybatis.hander.DateTimeTypeHander"/>
+		// typeHandler="mybatis.handler.DateTimeTypeHander"/>
 		// </parameterMap>
-		addParameterMap(javaTypes, config.getPojoPack(), builder, javaType);
-		addResultMap(javaTypes, config.getPojoPack(), builder, javaType);
+		addParameterMap(javaTypes, config.getPojoPack(), builder, javaType, isProtoType);
+		addResultMap(javaTypes, config.getPojoPack(), builder, javaType, isProtoType);
 		builder.append("<!--生成模板方法-->").append("\n");
 		builder.append("<!--").append("\n");
 		{// 生成insert语句
@@ -95,15 +100,17 @@ public class GeneratedMybatis {
 	}
 
 	private static void addParameterMap(List<SimpleJavaType> javaTypes, String modelPack, StringBuilder builder,
-			SimpleJavaType javaType) {
-		builder.append(String.format("<parameterMap type=\"%s.%s$Builder\" id=\"%sMap\">\n", modelPack,
-				javaType.getClassName(), javaType.getClassName()));
+			SimpleJavaType javaType, boolean isProtoType) {
+		String typeValue = modelPack + "." + javaType.getClassName();
+		if (isProtoType) {
+			typeValue += "$Builder";
+		}
+		builder.append(String.format("<parameterMap type=\"%s\" id=\"%sMap\">\n", typeValue, javaType.getClassName()));
 		for (int i = 0; i < javaTypes.size(); i++) {
 			SimpleJavaType type = javaTypes.get(i);
 			builder.append("\t");
 			if (type.getColumnTypeName() == "DATETIME") {
-				builder.append("<parameter property=\"" + type.getFieldName()
-						+ "\" typeHandler=\"com.look.mybatis.hander.DateTimeTypeHander\"/>");
+				builder.append("<parameter property=\"" + type.getFieldName() + "\" typeHandler=\"" + DateTimeHandler + "\"/>");
 			} else {
 				builder.append("<parameter property=\"" + type.getFieldName() + "\"/>");
 			}
@@ -113,16 +120,18 @@ public class GeneratedMybatis {
 	}
 
 	private static void addResultMap(List<SimpleJavaType> javaTypes, String modelPack, StringBuilder builder,
-			SimpleJavaType javaType) {
-		builder.append(String.format("<resultMap type=\"%s.%s$Builder\" id=\"%sResultMap\">\n", modelPack,
-				javaType.getClassName(), javaType.getClassName()));
+			SimpleJavaType javaType, boolean isProtoType) {
+		String typeValue = modelPack + "." + javaType.getClassName();
+		if (isProtoType) {
+			typeValue += "$Builder";
+		}
+		builder.append(String.format("<resultMap type=\"%s\" id=\"%sResultMap\">\n", typeValue, javaType.getClassName()));
 		builder.append("\t<id column=\"id\" property=\"id\"/>\n");
 		for (int i = 0; i < javaTypes.size(); i++) {
 			SimpleJavaType type = javaTypes.get(i);
 			builder.append("\t");
 			if (type.getColumnTypeName() == "DATETIME") {
-				builder.append(String.format(
-						"<result column=\"%s\" property=\"%s\" typeHandler=\"com.look.mybatis.hander.DateTimeTypeHander\"/>",
+				builder.append(String.format("<result column=\"%s\" property=\"%s\" typeHandler=\"" + DateTimeHandler + "\"/>",
 						type.getColumnName(), type.getFieldName()));
 			} else {
 				if (!type.getColumnName().equals("id")) {
