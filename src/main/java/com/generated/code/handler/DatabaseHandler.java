@@ -63,9 +63,10 @@ public abstract class DatabaseHandler {
 			while (count >= i) {
 				SimpleJavaType simpleJavaType = new SimpleJavaType();
 				simpleJavaType.setAutoIncrement(metaData.isAutoIncrement(i));
-				if (metaData.getColumnClassName(i).equals("[B")) {
-					simpleJavaType.setColumnClassName("java.lang.Byte[]");
-				} else {
+				DataTypeDefine dataTypeDefine= DataTypeDefine.getByClassName(metaData.getColumnClassName(i));
+				if(dataTypeDefine!=null){
+					simpleJavaType.setColumnClassName(dataTypeDefine.getJavaClassName());
+				}else {
 					simpleJavaType.setColumnClassName(metaData.getColumnClassName(i));
 				}
 				simpleJavaType.setColumnLabel(metaData.getColumnLabel(i));

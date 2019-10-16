@@ -23,7 +23,11 @@ public class GeneratedMybatis {
 	}
 
 	static final String INSERT_SQL_TEMP = "INSERT INTO %s \n(%s)\nVALUES\n(%s)";
-	static final String MYBATIS_INSERT = "<insert id='save' parameterType='%s' keyProperty='id_' useGeneratedKeys='true'>"//
+	static final String MYBATIS_INSERT_PROTO = "<insert id='save' parameterType='%s' keyProperty='id_' useGeneratedKeys='true'>"//
+			+ "\n\t<![CDATA[\n\t%s\n\t]]>\n"//
+			+ "</insert>";
+
+	static final String MYBATIS_INSERT_SIMPLE = "<insert id='save' parameterType='%s' keyProperty='id' useGeneratedKeys='true'>"//
 			+ "\n\t<![CDATA[\n\t%s\n\t]]>\n"//
 			+ "</insert>";
 
@@ -69,14 +73,21 @@ public class GeneratedMybatis {
 		// <parameter property="startTime"
 		// typeHandler="mybatis.handler.DateTimeTypeHander"/>
 		// </parameterMap>
-		addParameterMap(javaTypes, config.getPojoPack(), builder, javaType, isProtoType);
+		// addParameterMap(javaTypes, config.getPojoPack(), builder, javaType,
+		// isProtoType);
 		addResultMap(javaTypes, config.getPojoPack(), builder, javaType, isProtoType);
 		builder.append("<!--生成模板方法-->").append("\n");
 		builder.append("<!--").append("\n");
 		{// 生成insert语句
 			String insertSql = String.format(INSERT_SQL_TEMP, javaType.getTableName(), columns, fields);
-			String mybatisInsert = String.format(MYBATIS_INSERT, modelName, insertSql);
-			builder.append(mybatisInsert.replace('\'', '"')).append("\n");
+			if (isProtoType) {
+				String mybatisInsert = String.format(MYBATIS_INSERT_PROTO, modelName, insertSql);
+				builder.append(mybatisInsert.replace('\'', '"')).append("\n");
+			} else {
+				String mybatisInsert = String.format(MYBATIS_INSERT_SIMPLE, modelName, insertSql);
+				builder.append(mybatisInsert.replace('\'', '"')).append("\n");
+			}
+
 		}
 		{// 生成select语句
 			String selectSql = String.format(SELECT_SQL_TEMP, columns, javaType.getTableName());

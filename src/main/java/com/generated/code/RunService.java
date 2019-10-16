@@ -40,9 +40,9 @@ public class RunService {
 	public static void main(String[] args) throws SQLException {
 		Connector connector = config.getConnector();
 		connector.getTables().forEach((table) -> {
-			 if(!table.startsWith("user_log")){
-			 return;
-			 }
+			if(!table.equals("user.bak")){
+				return;
+			}
 			List<SimpleJavaType> typeList = connector.getColumns(table);
 			generatedPOJO(typeList);
 			generatedMybatisXml(typeList, false);
